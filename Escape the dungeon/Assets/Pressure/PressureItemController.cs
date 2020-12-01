@@ -21,8 +21,7 @@ public class PressureItemController : MonoBehaviour
 
     private void Start()
     {
-        player = FindObjectOfType<PlayerMover>()?.gameObject.transform;
-        if (player == null) player = player = FindObjectOfType<PlayerMoverWASD>().gameObject.GetComponentInChildren<Rigidbody>().gameObject.transform;
+        player = player = FindObjectOfType<PlayerMover>().gameObject.GetComponentInChildren<Rigidbody>().gameObject.transform;
         defaultMaterial = GetComponentInChildren<Renderer>().material;
     }
 

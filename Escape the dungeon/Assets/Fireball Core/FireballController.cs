@@ -20,7 +20,7 @@ public class FireballController : MonoBehaviour
 
     private void OnCollisionEnter(Collision col)
     {
-        if (col.gameObject.GetComponent<PlayerMoverWASD>() != null)
+        if (col.gameObject.GetComponent<PlayerMover>() != null)
         {
             StopAllCoroutines();
             gameObject.SetActive(false);
