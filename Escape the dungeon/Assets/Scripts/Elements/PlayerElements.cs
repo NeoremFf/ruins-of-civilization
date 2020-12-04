@@ -3,7 +3,6 @@ using elementsEnym = ElementsCore.Elements;
 
 public class PlayerElements : MonoBehaviour
 {
-    [System.Obsolete]
     public elementsEnym CurrentElement
     {
         get
@@ -16,13 +15,26 @@ public class PlayerElements : MonoBehaviour
             if (currentElement != value)
             {
                 currentElement = value;
-                Color color = ElementsCore.GetColorOfElement(currentElement);
-                var parts = GetComponentsInChildren<ParticleSystem>();
-                foreach (var item in parts)
-                    item.startColor = color;
+                Color32 color = new Color32();
+                var parts = GetComponentsInChildren<ParticleSystem>(true);
+                if (ElementsCore.GetColorOfElement(currentElement, out color))
+                {                
+                    foreach (var item in parts)
+                    {
+                        if (!item.gameObject.activeSelf) item.gameObject.SetActive(true);
+                        ParticleSystem.MainModule m = item.main;
+                        m.startColor = (Color)color;
+                    }
+                }
+                else
+                {                   
+                    foreach (var item in parts)
+                    {
+                        item.gameObject.SetActive(false);
+                    }
+                }
             }
         }
     }
-
     private elementsEnym currentElement = elementsEnym.Water;
 }

@@ -7,7 +7,7 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private Vector3 offset = Vector3.zero;
     private Transform player = null;
-    private Vector3 rotationToPlayer;
+    private Vector3 orgRotation;
 
 
     private bool isCameraFollowPlayer = true;
@@ -15,7 +15,7 @@ public class CameraController : MonoBehaviour
     private void Start()
     {
         player = FindObjectOfType<PlayerMover>().gameObject.GetComponentInChildren<Rigidbody>().gameObject.transform;
-        rotationToPlayer = transform.rotation.eulerAngles;
+        orgRotation = this.transform.rotation.eulerAngles;
     }
 
     public void SetCameraPosition(Transform transform, Vector3 quaternion)
@@ -29,22 +29,23 @@ public class CameraController : MonoBehaviour
 
     private IEnumerator AnimCameraMove(Transform transform, Vector3 quaternion)
     {
-        float time = 2f;
+        float time = .0f;
         float t = 0;
+        this.transform.rotation = Quaternion.Euler(quaternion);
         while (t < time)
         {
             t += Time.deltaTime;
-            Debug.Log(t);
-            Vector3 rot = Vector3.Lerp(rotationToPlayer, quaternion, t / time);
-            this.transform.Rotate(rot, Space.World);
+            this.transform.rotation = Quaternion.Lerp(Quaternion.Euler(orgRotation), Quaternion.Euler(quaternion), t / time);
+            //this.transform.Rotate(rot, Space.World);
             yield return null;
         }
     }
 
     public void ResetCameraPosition()
     {
+        StopAllCoroutines();
         isCameraFollowPlayer = true;
-        transform.Rotate(rotationToPlayer, Space.World);
+        transform.rotation = Quaternion.Euler(orgRotation);
     }
 
     void Update()

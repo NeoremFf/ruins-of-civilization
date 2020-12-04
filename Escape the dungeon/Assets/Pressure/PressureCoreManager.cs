@@ -21,19 +21,24 @@ public class PressureCoreManager : MonoBehaviour
         maxId = pressureItems.Length;
     }
 
-    public bool PlayerPressed(int id = 0)
+    public bool PlayerPressed(int id)
     {
-        Debug.Log("Player Pressed");
         ++currentPressedItem;
-        isTruePressed = id == prevId + 1;
-        prevId = id;
-        Debug.Log("isTruePressed = " + isTruePressed);
+        if (isTruePressed)
+        {
+            isTruePressed = id == prevId + 1;
+            prevId = id;
+        }
+               
         if (currentPressedItem >= maxId)
         {
             if (isTruePressed)
                 door.OpenDoor();
             else
+            {
                 ResetPressStateOfAllPressureItems();
+                isTruePressed = true;
+            }
             return isTruePressed;
         }
         return isTruePressed;

@@ -15,13 +15,9 @@ public class PressureItemController : MonoBehaviour
     private int id = -1;
 
     private bool alreadyPressed = false;
-    private bool alreadyStayed = false;
-
-    private Transform player = null;
 
     private void Start()
     {
-        player = player = FindObjectOfType<PlayerMover>().gameObject.GetComponentInChildren<Rigidbody>().gameObject.transform;
         defaultMaterial = GetComponentInChildren<Renderer>().material;
     }
 
@@ -31,25 +27,22 @@ public class PressureItemController : MonoBehaviour
         GetComponentInChildren<Renderer>().material = defaultMaterial;
     }
 
-    private void Update()
+    private void OnTriggerEnter(Collider other)
     {
-        Vector3 dir = transform.position - player.position;
-        if (!alreadyPressed)
+        if (other.gameObject.GetComponentInParent<PlayerMover>() != null)
         {
-            if (dir.magnitude < 1f)
+            if (!alreadyPressed)
             {
-                if (!alreadyStayed)
-                {
-                    Debug.Log("Player stay in the pressure: " + id);
-                    alreadyStayed = true;
-                    alreadyPressed = true;
-                    core.PlayerPressed(id);
-
-                    GetComponentInChildren<Renderer>().material = tempPressedMaterial;
-                }
+                StartCoroutine(PlayerPress());
             }
-            else
-                alreadyStayed = false;
         }
+    }
+
+    private IEnumerator PlayerPress()
+    {
+        alreadyPressed = true;
+        GetComponentInChildren<Renderer>().material = tempPressedMaterial;
+        yield return new WaitForEndOfFrame();
+        core.PlayerPressed(id);
     }
 }

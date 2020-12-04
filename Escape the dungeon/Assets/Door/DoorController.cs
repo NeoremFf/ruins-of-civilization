@@ -20,7 +20,7 @@ public class DoorController : MonoBehaviour
     {
         Debug.Log("Door is open");
         animator = GetComponentInChildren<Animator>();
-        animator.Play("Open");
+        //animator.Play("Open");
         //openDoorSound.Play();
         StartCoroutine(DoorOpened());
     }

@@ -62,10 +62,8 @@ public class PyramidsPuzzleCore : MonoBehaviour
             return s;
         }
 
-        // TODO
-        public bool CheckWin()
+        public bool IsAllSpheresHere()
         {
-            if (Position != 2) return false;
             foreach (var item in spheres)
             {
                 if (item == null) return false;
@@ -140,33 +138,44 @@ public class PyramidsPuzzleCore : MonoBehaviour
             {
                 if (linkToHitPlatform == null)
                 {
-                    GameObject tempObj = hit.collider.gameObject;
-                    if (platformsPairs[tempObj].GetCountOfShperes() == 0) return;
-                    linkToHitPlatform = tempObj;
-
-                    // material
-                    linkToHitPlatform.GetComponent<Renderer>().material.color = Color.red;
-                    GameObject sphereObj = spheresPairs[platformsPairs[linkToHitPlatform].GetSphere()];
-                    sphereObj.GetComponent<Renderer>().material.color = Color.red;
+                    NoSelectedPlatform(hit.collider.gameObject);
                 }
                 else
                 {
-                    GameObject hitPlatform = hit.collider.gameObject;
-                    Sphere sphereToAdd = platformsPairs[linkToHitPlatform].GetSphere();
-                    Platform platform = platformsPairs[hitPlatform];
-                    if (platform.AddSphere(sphereToAdd))
-                    {
-                        platformsPairs[linkToHitPlatform].RemoveSphere();
-                        spheresPairs[sphereToAdd].transform.position = hitPlatform.transform.position + (Vector3.up * (platform.GetCountOfShperes() * 0.5f));
-
-                        if (platform.CheckWin()) gameObject.GetComponent<PuzzleManager>().PuzzleComplited();
-                    }
-                    linkToHitPlatform.GetComponent<Renderer>().material.color = Color.white;
-                    GameObject sphereObj = spheresPairs[sphereToAdd];
-                    sphereObj.GetComponent<Renderer>().material.color = Color.white;
-                    linkToHitPlatform = null;
+                    SelectedPlatformIs(hit.collider.gameObject);
                 }
             }
         }
+    }
+
+    private void NoSelectedPlatform(GameObject platformHit)
+    {
+        GameObject tempObj = platformHit;
+        if (platformsPairs[tempObj].GetCountOfShperes() == 0) return;
+        linkToHitPlatform = tempObj;
+
+        GameObject sphereObj = spheresPairs[platformsPairs[linkToHitPlatform].GetSphere()];
+    }
+
+    private void SelectedPlatformIs(GameObject platformHit)
+    {
+        GameObject hitPlatform = platformHit;
+        Sphere sphereToAdd = platformsPairs[linkToHitPlatform].GetSphere();
+        Platform platform = platformsPairs[hitPlatform];
+        if (platform.AddSphere(sphereToAdd))
+        {
+            platformsPairs[linkToHitPlatform].RemoveSphere();
+            spheresPairs[sphereToAdd].transform.position = hitPlatform.transform.position + (Vector3.up * (platform.GetCountOfShperes() * 0.5f));
+
+            if (CheckWin(platform)) gameObject.GetComponent<PuzzleManager>().PuzzleComplited();
+        }
+        linkToHitPlatform = null;
+    }
+
+    // TODO
+    private bool CheckWin(Platform platform)
+    {
+        if (platform.Position != 2) return false;
+        return platform.IsAllSpheresHere();
     }
 }
